@@ -1,0 +1,4 @@
+id_seguimiento,id_caso,fecha,institucion,profesional,tipo_seguimiento,descripcion,riesgo_reportado
+1,1,2024-04-05,Comisaría de Familia,María Gómez,Visita domiciliaria,Se verifica cumplimiento de medida de protección.,Alto
+2,1,2024-04-10,Casa Matría,Laura Pérez,Atención psicológica,Primera sesión de intervención terapéutica.,Medio
+3,1,2024-04-15,EAE,Carlos Ruiz,Seguimiento telefónico,Se confirma estabilidad temporal del entorno.,Medio
