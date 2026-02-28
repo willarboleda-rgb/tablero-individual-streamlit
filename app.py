@@ -304,6 +304,7 @@ ib1, ib2 = st.columns(2)
 
 with ib1:
     st.markdown("<div class='card'><div class='card-title'>Características de la mujer</div>", unsafe_allow_html=True)
+    st.write(f"Nacionalidad: {D.get('nacion','')}")
     st.write(f"Edad: {D.get('edad','')}")
     st.write(f"Sexo: {D.get('sexo','')}")
     st.write(f"Etnia: {D.get('etnia','')}")
