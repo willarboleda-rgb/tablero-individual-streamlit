@@ -423,22 +423,22 @@ contactos_fijos = [
     {
         "organismo": "Defensoria del pueblo",
         "email": "defensoria@cali.gov.co",
-        "telefono": "6020000005",
+        "telefono": "6020000007",
     },
     {
         "organismo": "Personería Distrital de Santiago de Cali",
         "email": "personeria@cali.gov.co",
-        "telefono": "6020000006",
+        "telefono": "6020000008",
     },
       {
         "organismo": "Procuraduría General de la Nación",
         "email": "procuraduria@cali.gov.co",
-        "telefono": "6020000005",
+        "telefono": "6020000009",
     },
     {
         "organismo": "Secretaría de Seguridad y Justicia",
         "email": "secretaria_seg_jus@cali.gov.co",
-        "telefono": "6020000006",
+        "telefono": "6020000010",
     },
 ]
 
