@@ -410,6 +410,16 @@ contactos_fijos = [
         "email": "equipo-de-accion-de-emergencia-eae@cali.gov.co",
         "telefono": "6020000004",
     },
+    {
+        "organismo": "Policia",
+        "email": "policia@cali.gov.co",
+        "telefono": "6020000005",
+    },
+    {
+        "organismo": "Fiscalia",
+        "email": "fiscalia@cali.gov.co",
+        "telefono": "6020000006",
+    },
 ]
 
 # Render con tu estilo de “card” en HTML
