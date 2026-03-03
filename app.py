@@ -220,10 +220,12 @@ with c2:
         unsafe_allow_html=True
     )
 
+
 # =========================
 # LÍNEA DE TIEMPO + TABLA SEGUIMIENTOS (MULTIFILA)
 # =========================
 st.markdown("### Línea de tiempo del seguimiento")
+
 if seg_case.empty:
     st.markdown(
         """
@@ -238,61 +240,88 @@ if seg_case.empty:
         unsafe_allow_html=True
     )
 
+
 else:
     import streamlit.components.v1 as components
 
-    top_dates = seg_case["fecha"].head(3).tolist()
-    while len(top_dates) < 3:
-        top_dates.append("")
+    # 1) Ordena por fecha ascendente (antigua -> reciente) y formatea
+    fechas_ord = (
+        seg_case["fecha_dt"]
+        .dropna()
+        .sort_values(ascending=True)
+        .dt.strftime("%d/%m/%Y")
+        .tolist()
+    )
 
+    # 2) Toma las 3 últimas (si hay más de 3), conserva el orden asc
+    ult3 = fechas_ord[-3:]
+    while len(ult3) < 3:
+        ult3.insert(0, "")
+
+    # Mapeo solicitado: IZQ = 1ª (más antigua, p.ej. 05/04) | CEN = 2ª | DER = 3ª (más reciente, p.ej. 15/04)
+    fecha_izq, fecha_cen, fecha_der = ult3[0], ult3[1], ult3[2]
+
+    # 3) HTML con GRID de 5 columnas (gutter-izq | 3 columnas | gutter-der)
+    #    Fila 1: fechas (centradas en col 2,3,4)
+    #    Fila 2: línea de tiempo (col 2 a 4)
+    #    Fila 3: bloques (CASA / SIVIGILA / COMISARÍAS) alineados exactamente bajo cada fecha
     html_block = f"""
     <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.06);">
 
-      <div style="display:flex;justify-content:space-between;font-weight:700;">
-        <div>{top_dates[2]}</div>
-        <div>{top_dates[1]}</div>
-        <div>{top_dates[0]}</div>
-      </div>
+      <div style="
+        display:grid;
+        grid-template-columns: 5% 1fr 1fr 1fr 5%;
+        row-gap:8px;
+        align-items:center;
+        font-weight:700;
+      ">
+        <!-- Fila 1: Fechas (centro en cada columna) -->
+        <div></div>
+        <div style="text-align:center;">{fecha_izq}</div>
+        <div style="text-align:center;">{fecha_cen}</div>
+        <div style="text-align:center;">{fecha_der}</div>
+        <div></div>
 
-      <div style="height:3px;background:#111;margin-top:6px;"></div>
+        <!-- Fila 2: Línea de tiempo (col 2 a 4) -->
+        <div></div>
+        <div style="grid-column: 2 / span 3; height:3px; background:#111; border-radius:2px;"></div>
+        <div></div>
 
-      <div style="display:flex;justify-content:space-between;margin-top:0px;">
+        <!-- Fila 3: Bloques alineados bajo cada fecha -->
+        <div></div>
 
-        <div style="text-align:center;width:32%;">
-          <div style="width:3px;height:22px;background:#6A00FF;margin:-4px auto 8px auto;border-radius:3px;"></div>
-          <div style="font-family:Arial, sans-serif;font-size:15px;letter-spacing:1px;">
-        <b>CASA MATRÍA</b>
-        </div>
+        <!-- IZQUIERDA: CASA MATRÍA -->
+        <div style="text-align:center;">
+          <div style="width:3px;height:22px;background:#6A00FF;margin:-12px auto 8px auto;border-radius:3px;"></div>
+          <div style="font-family:Arial, sans-serif;font-size:15px;letter-spacing:1px;"><b>CASA MATRÍA</b></div>
           <div>Riesgo {risk_badge(D.get('riesgo_casamatria',''))}</div>
         </div>
 
-        <div style="text-align:center;width:32%;">
-          <div style="width:3px;height:22px;background:#6A00FF;margin:-4px auto 8px auto;border-radius:3px;"></div>
-          <div style="font-family:Arial, sans-serif;font-size:15px;letter-spacing:1px;">
-        <b>SIVIGILA</b>
-        </div>          <div>Riesgo {risk_badge(D.get('riesgo_sivigila',''))}</div>
+        <!-- CENTRO: SIVIGILA -->
+        <div style="text-align:center;">
+          <div style="width:3px;height:22px;background:#6A00FF;margin:-12px auto 8px auto;border-radius:3px;"></div>
+          <div style="font-family:Arial, sans-serif;font-size:15px;letter-spacing:1px;"><b>SIVIGILA</b></div>
+          <div>Riesgo {risk_badge(D.get('riesgo_sivigila',''))}</div>
         </div>
 
-        <div style="text-align:center;width:32%;">
-          <div style="width:3px;height:22px;background:#6A00FF;margin:-4px auto 8px auto;border-radius:3px;"></div>
-          <div style="font-family:Arial, sans-serif;font-size:15px;letter-spacing:1px;">
-        <b>COMISARIAS</b>
-        </div>
+        <!-- DERECHA: COMISARIAS -->
+        <div style="text-align:center;">
+          <div style="width:3px;height:22px;background:#6A00FF;margin:-12px auto 8px auto;border-radius:3px;"></div>
+          <div style="font-family:Arial, sans-serif;font-size:15px;letter-spacing:1px;"><b>COMISARIAS</b></div>
           <div>Riesgo {risk_badge(D.get('riesgo_comisarias',''))}</div>
         </div>
 
+        <div></div>
       </div>
 
+      <!-- Caja del último seguimiento -->
       <div style="margin-top:10px;background:#fff;border:1px dashed #d1d5db;border-radius:10px;padding:12px;">
         <b>Último seguimiento:</b> {safe_text(seg_case.iloc[0].get('descripcion',''))}
       </div>
 
     </div>
     """
-    components.html(html_block, height=200)
-    st.markdown("#### Seguimientos del caso")
-    show_cols = [c for c in ["fecha", "institucion", "profesional", "tipo_seguimiento", "descripcion", "riesgo_reportado"] if c in seg_case.columns]
-    st.dataframe(seg_case[show_cols], use_container_width=True, hide_index=True)
+    components.html(html_block, height=240)
 
 
 # =========================
